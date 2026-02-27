@@ -4997,22 +4997,54 @@
 
   // noble-curves-entry.js
   (function() {
-    if (typeof globalThis !== "undefined" && (typeof globalThis.crypto === "undefined" || typeof globalThis.crypto.getRandomValues !== "function")) {
-      try {
-        var _require = new Function('return typeof require !== "undefined" ? require : null')();
-        if (_require) {
-          var _nodeCrypto = _require("crypto");
-          if (!globalThis.crypto) {
-            globalThis.crypto = {};
+    var target = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : this;
+    if (target && target.crypto && typeof target.crypto.getRandomValues === "function") {
+      return;
+    }
+    try {
+      if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+        if (target) {
+          target.crypto = crypto;
+        }
+        return;
+      }
+    } catch (e) {
+    }
+    try {
+      if (typeof global !== "undefined" && global.crypto && typeof global.crypto.getRandomValues === "function") {
+        if (target) {
+          target.crypto = global.crypto;
+        }
+        return;
+      }
+    } catch (e) {
+    }
+    try {
+      if (typeof self !== "undefined" && self.crypto && typeof self.crypto.getRandomValues === "function") {
+        if (target) {
+          target.crypto = self.crypto;
+        }
+        return;
+      }
+    } catch (e) {
+    }
+    try {
+      var _req = new Function('return typeof require === "function" ? require : null')();
+      if (_req) {
+        var _nc = _req("crypto");
+        if (_nc && typeof _nc.randomBytes === "function") {
+          if (!target.crypto) {
+            target.crypto = {};
           }
-          globalThis.crypto.getRandomValues = function(buf) {
-            var bytes = _nodeCrypto.randomBytes(buf.length);
+          target.crypto.getRandomValues = function(buf) {
+            var bytes = _nc.randomBytes(buf.length);
             buf.set(bytes);
             return buf;
           };
+          return;
         }
-      } catch (e) {
       }
+    } catch (e) {
     }
   })();
   var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
