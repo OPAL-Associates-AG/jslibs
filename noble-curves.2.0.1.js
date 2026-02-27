@@ -149,7 +149,7 @@
     return Object.freeze(hashC);
   }
   function randomBytes(bytesLength = 32) {
-    const cr = typeof globalThis === "object" ? globalThis.crypto : null;
+    const cr = typeof window === "object" ? window.crypto : null;
     if (typeof cr?.getRandomValues !== "function")
       throw new Error("crypto.getRandomValues must be defined");
     return cr.getRandomValues(new Uint8Array(bytesLength));
@@ -4997,7 +4997,7 @@
 
   // noble-curves-entry.js
   (function() {
-    var target = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : this;
+    var target = typeof window !== "undefined" ? window : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : this;
     function install(cryptoObj) {
       if (target) {
         target.crypto = cryptoObj;
