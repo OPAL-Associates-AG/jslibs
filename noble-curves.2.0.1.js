@@ -150,9 +150,25 @@
   }
   function randomBytes(bytesLength = 32) {
     const cr = typeof window === "object" ? window.crypto : null;
-    if (typeof cr?.getRandomValues !== "function")
-      throw new Error("crypto.getRandomValues must be defined");
-    return cr.getRandomValues(new Uint8Array(bytesLength));
+    if (typeof cr?.getRandomValues === "function") {
+      return cr.getRandomValues(new Uint8Array(bytesLength));
+    }
+    // Fallback PRNG — used when crypto is unavailable (e.g. Postman sandbox).
+    var _t = Date.now();
+    var _x = _t >>> 0;
+    var _y = (_t * 1664525 + 1013904223) >>> 0;
+    var _z = (Math.random() * 0xFFFFFFFF) >>> 0;
+    var _w = (Math.random() * 0xFFFFFFFF) >>> 0;
+    var _out = new Uint8Array(bytesLength);
+    for (var _i = 0; _i < bytesLength; ) {
+      var _s = _x ^ (_x << 11); _x = _y; _y = _z; _z = _w;
+      _w = (_w ^ (_w >>> 19)) ^ (_s ^ (_s >>> 8));
+      _out[_i++] = _w & 0xff;
+      if (_i < bytesLength) _out[_i++] = (_w >>> 8) & 0xff;
+      if (_i < bytesLength) _out[_i++] = (_w >>> 16) & 0xff;
+      if (_i < bytesLength) _out[_i++] = (_w >>> 24) & 0xff;
+    }
+    return _out;
   }
   var isLE, swap32IfBE, hasHexBuiltin, hexes, asciis, oidNist;
   var init_utils = __esm({
