@@ -149,7 +149,7 @@
     return Object.freeze(hashC);
   }
   function randomBytes(bytesLength = 32) {
-    const cr = typeof window === "object" ? window.crypto : null;
+    const cr = typeof globalThis === "object" ? globalThis.crypto : null;
     if (typeof cr?.getRandomValues !== "function")
       throw new Error("crypto.getRandomValues must be defined");
     return cr.getRandomValues(new Uint8Array(bytesLength));
