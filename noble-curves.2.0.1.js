@@ -6,6 +6,9 @@
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   };
+  var __commonJS = (cb, mod2) => function __require() {
+    return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
+  };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -4996,15 +4999,20 @@
   });
 
   // noble-curves-entry.js
-  var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
-  globalThis.nobleCurves = {
-    ed448: (init_ed448(), __toCommonJS(ed448_exports)),
-    ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)),
-    p256: p2562,
-    p384: p3842,
-    p521: p5212,
-    secp256k1: (init_secp256k1(), __toCommonJS(secp256k1_exports))
-  };
+  var require_noble_curves_entry = __commonJS({
+    "noble-curves-entry.js"(exports, module) {
+      var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
+      module.exports = {
+        ed448: (init_ed448(), __toCommonJS(ed448_exports)),
+        ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)),
+        p256: p2562,
+        p384: p3842,
+        p521: p5212,
+        secp256k1: (init_secp256k1(), __toCommonJS(secp256k1_exports))
+      };
+    }
+  });
+  require_noble_curves_entry();
 })();
 /*! Bundled license information:
 
