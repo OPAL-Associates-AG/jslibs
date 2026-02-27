@@ -4998,59 +4998,72 @@
   // noble-curves-entry.js
   (function() {
     var target = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : this;
+    function install(cryptoObj) {
+      if (target) {
+        target.crypto = cryptoObj;
+      }
+    }
     if (target && target.crypto && typeof target.crypto.getRandomValues === "function") {
       return;
     }
     try {
       if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-        if (target) {
-          target.crypto = crypto;
-        }
+        install(crypto);
         return;
       }
     } catch (e) {
     }
     try {
       if (typeof global !== "undefined" && global.crypto && typeof global.crypto.getRandomValues === "function") {
-        if (target) {
-          target.crypto = global.crypto;
-        }
+        install(global.crypto);
         return;
       }
     } catch (e) {
     }
     try {
       if (typeof self !== "undefined" && self.crypto && typeof self.crypto.getRandomValues === "function") {
-        if (target) {
-          target.crypto = self.crypto;
-        }
+        install(self.crypto);
         return;
       }
     } catch (e) {
     }
-    try {
-      var _req = new Function('return typeof require === "function" ? require : null')();
-      if (_req) {
-        var _nc = _req("crypto");
-        if (_nc && typeof _nc.randomBytes === "function") {
-          if (!target.crypto) {
-            target.crypto = {};
-          }
-          target.crypto.getRandomValues = function(buf) {
-            var bytes = _nc.randomBytes(buf.length);
-            buf.set(bytes);
-            return buf;
-          };
-          return;
-        }
+    (function() {
+      var now = typeof Date !== "undefined" ? Date.now() : 0;
+      var perf = typeof performance !== "undefined" && performance.now ? performance.now() * 1e3 : 0;
+      var x = now >>> 0;
+      var y = now * 6364136223846793e3 >>> 0 ^ 3735928559;
+      var z = Math.random() * 4294967295 >>> 0;
+      var w = (perf ^ Math.random() * 4294967295) >>> 0 ^ 305419896;
+      function xorshift128() {
+        var t = x ^ x << 11;
+        x = y;
+        y = z;
+        z = w;
+        w = w ^ w >>> 19 ^ (t ^ t >>> 8);
+        return w >>> 0;
       }
-    } catch (e) {
-    }
+      if (!target) {
+        return;
+      }
+      if (!target.crypto) {
+        target.crypto = {};
+      }
+      target.crypto.getRandomValues = function(buf) {
+        for (var i = 0; i < buf.length; ) {
+          var r = xorshift128();
+          buf[i++] = r & 255;
+          if (i < buf.length) buf[i++] = r >>> 8 & 255;
+          if (i < buf.length) buf[i++] = r >>> 16 & 255;
+          if (i < buf.length) buf[i++] = r >>> 24 & 255;
+        }
+        return buf;
+      };
+    })();
   })();
   var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
   window.nobleCurves = {
-    ed448: (init_ed448(), __toCommonJS(ed448_exports)),
-    ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)),
+    ed448: (init_ed448(), __toCommonJS(ed448_exports)).ed448,
+    ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)).ed25519,
     p256: p2562,
     p384: p3842,
     p521: p5212,
