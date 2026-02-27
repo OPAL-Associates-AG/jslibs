@@ -4996,6 +4996,25 @@
   });
 
   // noble-curves-entry.js
+  (function() {
+    if (typeof globalThis !== "undefined" && (typeof globalThis.crypto === "undefined" || typeof globalThis.crypto.getRandomValues !== "function")) {
+      try {
+        var _require = new Function('return typeof require !== "undefined" ? require : null')();
+        if (_require) {
+          var _nodeCrypto = _require("crypto");
+          if (!globalThis.crypto) {
+            globalThis.crypto = {};
+          }
+          globalThis.crypto.getRandomValues = function(buf) {
+            var bytes = _nodeCrypto.randomBytes(buf.length);
+            buf.set(bytes);
+            return buf;
+          };
+        }
+      } catch (e) {
+      }
+    }
+  })();
   var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
   window.nobleCurves = {
     ed448: (init_ed448(), __toCommonJS(ed448_exports)),
