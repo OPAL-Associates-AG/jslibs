@@ -6,9 +6,6 @@
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   };
-  var __commonJS = (cb, mod2) => function __require() {
-    return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
-  };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -1525,7 +1522,7 @@
     const shiftBy = BigInt(W);
     return { windows, windowSize, mask, maxNumber, shiftBy };
   }
-  function calcOffsets(n, window, wOpts) {
+  function calcOffsets(n, window2, wOpts) {
     const { windowSize, mask, maxNumber, shiftBy } = wOpts;
     let wbits = Number(n & mask);
     let nextN = n >> shiftBy;
@@ -1533,11 +1530,11 @@
       wbits -= maxNumber;
       nextN += _1n3;
     }
-    const offsetStart = window * windowSize;
+    const offsetStart = window2 * windowSize;
     const offset = offsetStart + Math.abs(wbits) - 1;
     const isZero = wbits === 0;
     const isNeg = wbits < 0;
-    const isNegF = window % 2 !== 0;
+    const isNegF = window2 % 2 !== 0;
     const offsetF = offsetStart;
     return { nextN, offset, isZero, isNeg, isNegF, offsetF };
   }
@@ -1705,7 +1702,7 @@
           const points = [];
           let p = point;
           let base = p;
-          for (let window = 0; window < windows; window++) {
+          for (let window2 = 0; window2 < windows; window2++) {
             base = p;
             points.push(base);
             for (let i = 1; i < windowSize; i++) {
@@ -1728,8 +1725,8 @@
           let p = this.ZERO;
           let f = this.BASE;
           const wo = calcWOpts(W, this.bits);
-          for (let window = 0; window < wo.windows; window++) {
-            const { nextN, offset, isZero, isNeg, isNegF, offsetF } = calcOffsets(n, window, wo);
+          for (let window2 = 0; window2 < wo.windows; window2++) {
+            const { nextN, offset, isZero, isNeg, isNegF, offsetF } = calcOffsets(n, window2, wo);
             n = nextN;
             if (isZero) {
               f = f.add(negateCt(isNegF, precomputes[offsetF]));
@@ -1747,10 +1744,10 @@
          */
         wNAFUnsafe(W, precomputes, n, acc = this.ZERO) {
           const wo = calcWOpts(W, this.bits);
-          for (let window = 0; window < wo.windows; window++) {
+          for (let window2 = 0; window2 < wo.windows; window2++) {
             if (n === _0n3)
               break;
-            const { nextN, offset, isZero, isNeg } = calcOffsets(n, window, wo);
+            const { nextN, offset, isZero, isNeg } = calcOffsets(n, window2, wo);
             n = nextN;
             if (isZero) {
               continue;
@@ -4999,20 +4996,15 @@
   });
 
   // noble-curves-entry.js
-  var require_noble_curves_entry = __commonJS({
-    "noble-curves-entry.js"(exports, module) {
-      var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
-      module.exports = {
-        ed448: (init_ed448(), __toCommonJS(ed448_exports)),
-        ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)),
-        p256: p2562,
-        p384: p3842,
-        p521: p5212,
-        secp256k1: (init_secp256k1(), __toCommonJS(secp256k1_exports))
-      };
-    }
-  });
-  require_noble_curves_entry();
+  var { p256: p2562, p384: p3842, p521: p5212 } = (init_nist(), __toCommonJS(nist_exports));
+  window.nobleCurves = {
+    ed448: (init_ed448(), __toCommonJS(ed448_exports)),
+    ed25519: (init_ed25519(), __toCommonJS(ed25519_exports)),
+    p256: p2562,
+    p384: p3842,
+    p521: p5212,
+    secp256k1: (init_secp256k1(), __toCommonJS(secp256k1_exports))
+  };
 })();
 /*! Bundled license information:
 
